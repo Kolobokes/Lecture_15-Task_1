@@ -3,6 +3,7 @@ import ru.netology.repository.IssuesRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.function.Predicate;
 
 public class IssuesManager {
 
@@ -91,8 +92,8 @@ public class IssuesManager {
 
     }
 
- //   public void filterBy(Set author){
-  //      Predicate<Issues> filterByAuthor = s -> s.getAuthor();
-  //  }
+    public void filterBy(Issues author){
+        Predicate<Issues> filterByAuthor = s -> s.getAuthor();
+    }
 
 }

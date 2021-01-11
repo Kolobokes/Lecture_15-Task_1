@@ -3,24 +3,37 @@ import ru.netology.repository.IssuesRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static ru.netology.domain.Issues.*;
 
 public class IssuesManager {
 
     IssuesRepository repository = new IssuesRepository();
 
-    public void addIssues(Issues issues){
-        repository.save(issues);
+    public void addIssues(Issues issue){
+        repository.save(issue);
+    }
+
+    public ArrayList findAllIssues(){
+        return repository.findAll();
+    }
+
+    public void deleteIssues(Issues issue){
+        repository.remove(issue);
     }
 
     public ArrayList openIssues(){
 
        ArrayList <Issues> allIssues =  repository.findAll();
-       ArrayList <Issues> openIssues = new ArrayList <Issues> ();
+       ArrayList <Issues> openIssues = new ArrayList <Issues>();
 
-        for (Issues issues: allIssues) {
-            if (issues.isIssuesClose() == false) {
-                openIssues.add(issues);
+        for (Issues issue: allIssues) {
+            if (issue.isIssuesClose() == false) {
+                openIssues.add(issue);
             }
         }
         return openIssues;
@@ -31,9 +44,9 @@ public class IssuesManager {
         ArrayList <Issues> allIssues =  repository.findAll();
         ArrayList<Issues> closeIssues = new ArrayList<Issues>();
 
-        for (Issues issues: allIssues) {
-            if (issues.isIssuesClose()) {
-                closeIssues.add(issues);
+        for (Issues issue: allIssues) {
+            if (issue.isIssuesClose()) {
+                closeIssues.add(issue);
             }
         }
 
@@ -41,28 +54,31 @@ public class IssuesManager {
 
     }
 
-    public ArrayList filterByAuthor(ArrayList issues){
+    public ArrayList<Issues> filterIssuesAuthor(String author){
 
-        ArrayList<Issues> filterByAuthor = new ArrayList<Issues>();
-        return filterByAuthor;
+        ArrayList <Issues> allIssues =  repository.findAll();
 
-    }
-
-    public ArrayList filterByLabel(ArrayList issues){
-
-        ArrayList<Issues> filterByLabel = new ArrayList<Issues>();
-        return filterByLabel;
+        return filterBy(filterByAuthor(Set.of(author)));
 
     }
 
-    public ArrayList filterByAssignee(ArrayList issues){
+    public ArrayList<Issues> filterIssuesLabel(String label){
 
-        ArrayList<Issues> filterByAssignee = new ArrayList<Issues>();
-        return filterByAssignee;
+        ArrayList <Issues> allIssues =  repository.findAll();
+
+        return filterBy(filterByLabel(Set.of(label)));
 
     }
 
-    public void sortIssues(String sortingAttribute){
+    public ArrayList<Issues> filterIssuesAssignee(String assignee){
+
+        ArrayList <Issues> allIssues =  repository.findAll();
+
+        return filterBy(filterByAssignee(Set.of(assignee)));
+
+    }
+
+    public ArrayList <Issues> sortIssues(String sortingAttribute){
 
         ArrayList <Issues> allIssues =  repository.findAll();
 
@@ -84,6 +100,8 @@ public class IssuesManager {
         if (sortingAttribute == "LeastCommented")
             Collections.sort(allIssues, new LeastCommentedComparator());
 
+        return allIssues;
+
     }
 
     public void changeStatusIssues(Boolean closeIssues, int issuesId){
@@ -92,8 +110,13 @@ public class IssuesManager {
 
     }
 
-    public void filterBy(Issues author){
-        Predicate<Issues> filterByAuthor = s -> s.getAuthor();
+    public ArrayList<Issues> filterBy(Predicate<Issues> predicate) {
+
+        ArrayList<Issues> allIssues = repository.findAll();
+
+        return (ArrayList<Issues>) allIssues.stream()
+                .filter( predicate )
+                .collect(Collectors.<Issues>toList());
     }
 
 }

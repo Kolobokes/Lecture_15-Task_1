@@ -3,18 +3,23 @@ package ru.netology.repository;
 import ru.netology.domain.Issues;
 
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 public class IssuesRepository {
     private ArrayList<Issues> issues = new ArrayList<Issues>();
 
-    public void save(Issues newIssues) {
-        issues.add(newIssues);
+    public void save(Issues newIssue) {
+        issues.add(newIssue);
+    }
+
+    public boolean remove(Issues issue) {
+        return issues.remove(issue);
     }
 
     public Issues findById(int id) {
-        for (Issues issues : issues) {
-            if (issues.getId() == id) {
-                return issues;
+        for (Issues issue : issues) {
+            if (issue.getId() == id) {
+                return issue;
             }
         }
         return null;
@@ -25,13 +30,13 @@ public class IssuesRepository {
         return issues;
     }
 
-    public void changeStatusIssues(Boolean closeIssues, int issuesId){
-        Issues foundIssues = findById(issuesId);
-        if (foundIssues != null) {
-            if (closeIssues){
-                foundIssues.setIssuesClose(true);
+    public void changeStatusIssues(Boolean closeIssue, int issueId){
+        Issues foundIssue = findById(issueId);
+        if (foundIssue != null) {
+            if (closeIssue){
+                foundIssue.setIssuesClose(true);
             }
-            foundIssues.setIssuesClose(false);
+            foundIssue.setIssuesClose(false);
         }
     }
 }
